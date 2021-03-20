@@ -8,6 +8,8 @@
 
     <!-- FONTS -->
 
+    <link rel="stylesheet" href="<?= BASE_URL ?>/node_modules/bootstrap/dist/css/bootstrap.min.css">
+
     <!-- STYLES -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
 
