@@ -1,0 +1,23 @@
+{
+  "name": "zadanie3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erikgreasy/webtech2-zadanie3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erikgreasy/webtech2-zadanie3/issues"
+  },
+  "homepage": "https://github.com/erikgreasy/webtech2-zadanie3#readme",
+  "dependencies": {
+    "bootstrap": "^4.6.0"
+  }
+}
