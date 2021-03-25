@@ -20,3 +20,12 @@ function dd( $var ) {
     echo '</pre>';
     die();
 }
+
+
+function logged_in() {
+    if( isset( $_SESSION['login'] ) && $_SESSION['login'] ) {
+        return true;
+    }
+    
+    return false;
+}
