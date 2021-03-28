@@ -72,4 +72,30 @@ class UserRepository {
             return false;
         }
     }
+
+
+
+    public function update( User $user ) {
+        $new_user = $this->getUser( $user->getId() );
+        $sql = "UPDATE users SET name = :name, surname = :surname, login = :login, email = :email, password = :password, googleAuth = :googleAuth WHERE id = :id";
+        $stmt = $this->conn->prepare( $sql );
+        $result = $stmt->execute([
+            'id'    => $user->getId(),
+            'name'  => $user->getName(),
+            'surname'   => $user->getSurname(),
+            'login' => $user->getLogin(),
+            'email' => $user->getEmail(),
+            'password'  => $user->getPassword(),
+            'googleAuth'   => $user->getGoogleAuth()
+        ]);
+
+        return $result;
+        
+    }
+
+    public function addSecret( $user_id, $secret ) {
+        $user = $this->getUser( $user_id );
+        $user->setGoogleAuth( $secret );
+        return $this->update( $user );
+    }
 }
