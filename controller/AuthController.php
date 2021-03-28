@@ -146,6 +146,7 @@ class AuthController {
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
 
+
         if( trim($name) == '' ) {
             $errors[] = 'Meno je povinne';
         }
@@ -155,11 +156,19 @@ class AuthController {
         }
 
         if( trim($email) == '' ) {
-            $errors[] = 'Email je povinne';
+            $errors[] = 'Email je povinny';
+        }
+        $emails = $this->userRepository->getEmails();
+        if( in_array( $email, $emails ) ) {
+            $errors[] = 'Zadany email uz je obasdeny';
         }
 
         if( trim($login) == '' ) {
             $errors[] = 'Login je povinny';
+        }
+        $logins = $this->userRepository->getLogins();
+        if( in_array( $login, $logins ) ) {
+            $errors[] = 'Zadany login uz je obasdeny';
         }
 
         if( $password == '' ) {

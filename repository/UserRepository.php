@@ -15,6 +15,28 @@ class UserRepository {
         $this->conn = $db->getConnection();
     }
 
+    public function all() {
+        $sql = "SELECT * FROM users";
+        
+        $stmt = $this->conn->query( $sql );
+        $users = $stmt->fetchAll( \PDO::FETCH_CLASS, User::class );
+        return $users;
+    }
+
+    public function getEmails() {
+        $sql = "SELECT email FROM users";
+        $stmt = $this->conn->query( $sql );
+        $emails = $stmt->fetchAll( \PDO::FETCH_COLUMN  );
+        return $emails;
+    }
+
+    public function getLogins() {
+        $sql = "SELECT login FROM users";
+        $stmt = $this->conn->query( $sql );
+        $logins = $stmt->fetchAll( \PDO::FETCH_COLUMN  );
+        return $logins;
+    }
+
     public function getUser( $id ) {
         $sql = "SELECT * FROM users WHERE id = :id";
         $stmt = $this->conn->prepare( $sql );
