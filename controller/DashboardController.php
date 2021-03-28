@@ -1,20 +1,50 @@
 <?php
 
-require_once 'inc/Database.php';
+namespace controller;
+
+use repository\UserRepository;
+use repository\LoginRepository;
 
 class DashboardController {
 
-    private $conn;
+    private $userRepository;
+    private $loginRepository;
 
     public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getConnection();
+        $this->userRepository = new UserRepository();
+        $this->loginRepository = new LoginRepository();
     }
 
     public function show() {
         if( !logged_in() ) {
             redirect( 'login' );
         }
-        return view( 'dashboard.php' );
+        
+        $user_id = $_SESSION['user_id'];
+        $user = $this->userRepository->getUser( $user_id );
+
+        if( $user ) {
+            return view( 'dashboard.php',[
+                'user'  => $user
+            ] );
+        }
+
+        session_destroy();
+        redirect( 'login' );
+    }
+
+    public function stats() {
+        if( !logged_in() ) {
+            redirect( BASE_URL . '/login' );
+        }
+
+        $user_id = $_SESSION['user_id'];
+
+        $user_logins = $this->loginRepository->userLogins( $user_id );
+        $all_logins = $this->loginRepository->all();
+
+        return view( 'login-stats.php',[
+            'user_logins'   => $user_logins
+        ]);
     }
 }

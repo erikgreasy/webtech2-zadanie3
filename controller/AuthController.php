@@ -1,19 +1,78 @@
 <?php
 
-require_once 'inc/Database.php';
+namespace controller;
+
+use repository\UserRepository;
+use repository\LoginRepository;
+use model\User;
+use model\Login;
+
 
 class AuthController {
 
-    private $conn;
+    private $userRepository;
+    private $loginRepository;
+
 
     public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getConnection();
+        $this->userRepository = new UserRepository();
+        $this->loginRepository = new LoginRepository();
     }
 
     
     public function login() {
-        return view('auth/login.php');
+        if(logged_in()) {
+            redirect(BASE_URL);
+        }
+
+        // create Client Request to access Google API
+        $client = new \Google_Client();
+        $client->setClientId(CLIENT_ID);
+        $client->setClientSecret(CLIENT_SECRET);
+        $client->setRedirectUri(REDIRECT_URI);
+        $client->addScope("email");
+        $client->addScope("profile");
+        // authenticate code from Google OAuth Flow
+        if (isset($_GET['code'])) {
+            $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+            $client->setAccessToken($token['access_token']);
+            
+            // // get profile info
+            $google_oauth = new \Google_Service_Oauth2($client);
+            $google_account_info = $google_oauth->userinfo->get();
+            $email =  $google_account_info->email;
+            $full_name =  $google_account_info->name;
+            $full_name = explode( ' ', $full_name );
+            $name = $full_name[0];
+            $surname = $full_name[1];
+
+            $user = $this->userRepository->getByEmail( $email );
+
+            // User not found in DB
+            if( !$user ) {
+                $user = new User();
+                $user->setName($name);
+                $user->setSurname($surname);
+                $user->setEmail($email);
+
+                $this->userRepository->add( $user );
+                
+                $user = $this->userRepository->getByEmail( $email );
+
+            }
+            $login = new Login();
+
+            $login->setUserId( $user->getId() );
+            $login->setType( 'google' );
+            $this->loginRepository->add( $login );
+            login_user( $user->getId(), $login );
+
+            redirect( BASE_URL );
+        }
+
+        return view('auth/login.php', [
+            'google_url' => $client->createAuthUrl()
+        ]);
     }
 
 
@@ -37,18 +96,19 @@ class AuthController {
             ] );
         }
 
-        $stmt = $this->conn->prepare( "SELECT * FROM users WHERE login = :login" );
-        $stmt->execute([
-            'login' => $login
-        ]);
+        $user = $this->userRepository->getByLogin( $login );
 
-        $result = $stmt->fetch( PDO::FETCH_OBJ );
+        if( $user ) {
 
-        if( $result ) {
-
-            if (password_verify( $password, $result->password)) {
+            if (password_verify( $password, $user->getPassword() )) {
                 // Success!
-                $_SESSION['login'] = 'abc';
+
+                $login = new Login();
+
+                $login->setUserId( $user->getId() );
+                $login->setType( 'native' );
+                $this->loginRepository->add( $login );
+                login_user( $user->getId(), $login );
 
                 return redirect(BASE_URL);
 
@@ -70,6 +130,10 @@ class AuthController {
 
 
     public function register() {
+        if(logged_in()) {
+            redirect(BASE_URL);
+        }
+        
         return view('auth/register.php');
     }
 
@@ -111,24 +175,60 @@ class AuthController {
             ] );
         }
 
-
         $password_encrypted = password_hash($password, PASSWORD_BCRYPT);
 
-        $sql = "INSERT INTO users (name, surname, email, login, password) VALUES(:name, :surname, :email, :login, :password)";
-        $stmt = $this->conn->prepare( $sql );
-        $result = $stmt->execute([
-            'name'  => $name,
-            'surname'   => $surname,
-            'email'     => $email,
-            'login'     => $login,
-            'password'  => $password_encrypted
-        ]);
+        $user = new User();
+        $user->setName( $name );
+        $user->setSurname( $surname );
+        $user->setEmail( $email );
+        $user->setLogin( $login );
+        $user->setPassword( $password_encrypted );
+
+        $this->userRepository->add( $user );
+        $login = new Login();
+        $login->setUserId( $user->getId() );
+        $login->setType( 'native' );
+        $this->loginRepository->add( $login );
+        login_user( $user->getId(), $login );
+
 
         return redirect( BASE_URL );
     }
 
     public function logout() {
-        session_destroy();
+        logout_user();
         redirect( BASE_URL );
+    }
+
+
+    public function ldap() {
+        
+        // using ldap bind
+        $ldapuid  = 'xmasnye';     // ldap rdn or dn
+        $ldappass = 'Erik.masny1999';  // associated password
+
+        $dn = 'ou=People, DC=stuba, DC=sk';
+        $ldaprdn = "uid=$ldapuid, $dn";
+
+        // connect to ldap server
+        $ldapconn = ldap_connect("ldap.stuba.sk")
+            or die("Could not connect to LDAP server.");
+
+        if ($ldapconn) {
+
+            $set = ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
+            // binding to ldap server
+            $ldapbind = ldap_bind($ldapconn, $ldaprdn, $ldappass);
+
+            // verify binding
+            if ($ldapbind) {
+                echo "LDAP bind successful...";
+            } else {
+                echo "LDAP bind failed...";
+            }
+
+        }
+
+        ldap_unbind($ldapconn);
     }
 }
