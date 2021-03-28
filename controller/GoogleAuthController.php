@@ -20,7 +20,7 @@ class GoogleAuthController {
 
     public function login() {
         $user_id = $_SESSION['ga-uid'];
-        if( $user_id == null ) {
+        if( ! $user_id || logged_in() ) {
             redirect( BASE_URL );
         }
         return view( 'auth/google/google-login.php',[
@@ -31,7 +31,7 @@ class GoogleAuthController {
 
     public function add() {
         $user_id = $_SESSION['ga-uid'];
-        if( !$user_id ) {
+        if( !$user_id || logged_in() ) {
             redirect( BASE_URL );
         }
         
