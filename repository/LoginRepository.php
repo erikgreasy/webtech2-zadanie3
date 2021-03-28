@@ -47,4 +47,13 @@ class LoginRepository {
 
         return $result;
     }
+
+    public function stats() {
+        $sql = "SELECT type, COUNT(type) as count FROM logins GROUP BY type";
+        $stmt = $this->conn->query( $sql );
+
+        $logins = $stmt->fetchAll( \PDO::FETCH_OBJ );
+        
+        return $logins;
+    }
 }
