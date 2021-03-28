@@ -2,7 +2,7 @@
 
 <main>
     <div class="container">
-        dashboard
+        Prihlasený ako <?= $user->getFullName() ?>
     </div>
 </main>
 
