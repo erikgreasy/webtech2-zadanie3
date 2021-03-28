@@ -7,6 +7,8 @@ require_once 'controller/DashboardController.php';
 
 use Pecee\Http\Request;
 use Pecee\SimpleRouter\SimpleRouter as Router;
+Router::setDefaultNamespace('controller');
+
 
 // AUTH
 Router::get( ROUTING_PREFIX . '/' , 'DashboardController@show');
@@ -15,6 +17,10 @@ Router::post( ROUTING_PREFIX . '/login' , 'AuthController@handle_login');
 Router::get( ROUTING_PREFIX . '/register' , 'AuthController@register');
 Router::post( ROUTING_PREFIX . '/register' , 'AuthController@handleRegister');
 Router::post( ROUTING_PREFIX . '/logout' , 'AuthController@logout');
+Router::get( ROUTING_PREFIX . '/ldap' , 'AuthController@ldap');
+Router::get( ROUTING_PREFIX . '/login-stats' , 'DashboardController@stats');
+
+
 
 
 
