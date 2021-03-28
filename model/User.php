@@ -10,6 +10,7 @@ class User {
     private $email;
     private $login;
     private $password;
+    private $googleAuth;
 
     public function getId() {
         return $this->id;
@@ -39,6 +40,10 @@ class User {
         return $this->password;
     }
 
+    public function getGoogleAuth() {
+        return $this->googleAuth;
+    }
+
     public function setId( $id ) {
         $this->id = $id;
     }
@@ -61,6 +66,10 @@ class User {
 
     public function setPassword( $password ) {
         $this->password = $password;
+    }
+
+    public function setGoogleAuth( $googleAuth ) {
+        $this->googleAuth = $googleAuth;
     }
 
 }
