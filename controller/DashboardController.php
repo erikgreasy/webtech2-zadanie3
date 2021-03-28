@@ -41,10 +41,11 @@ class DashboardController {
         $user_id = $_SESSION['user_id'];
 
         $user_logins = $this->loginRepository->userLogins( $user_id );
-        $all_logins = $this->loginRepository->all();
+        $login_stats = $this->loginRepository->stats();
 
         return view( 'login-stats.php',[
-            'user_logins'   => $user_logins
+            'user_logins'   => $user_logins,
+            'login_stats'   => $login_stats,
         ]);
     }
 }

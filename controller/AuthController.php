@@ -103,14 +103,13 @@ class AuthController {
             if (password_verify( $password, $user->getPassword() )) {
                 // Success!
 
-                $login = new Login();
-
-                $login->setUserId( $user->getId() );
-                $login->setType( 'native' );
-                $this->loginRepository->add( $login );
-                login_user( $user->getId(), $login );
-
-                return redirect(BASE_URL);
+                
+                $_SESSION['ga-uid'] = $user->getId();
+                if( $user->getGoogleAuth() == '' ) {
+                    return redirect(BASE_URL . '/google-add');
+                } else {
+                    return redirect(BASE_URL . '/google-login');
+                }
 
             }else {
                 // Invalid credentials
@@ -301,5 +300,5 @@ class AuthController {
             ] );
         }
 
-    }
+    }    
 }
