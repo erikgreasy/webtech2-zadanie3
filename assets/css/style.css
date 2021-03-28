@@ -2,3 +2,8 @@ main {
     padding: 100px 0;
     min-height: calc( 100vh - 56px - 56px );
 }
+
+#loginsChart {
+    max-width: 300px;
+    margin: 0 auto;
+}
