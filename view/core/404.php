@@ -1,7 +1,9 @@
 <?php include 'header.php' ?>
 
 <main>
-    not found sorry
+    <div class="container">
+        404 - not found sorry :(
+    </div>
 </main>
 
 <?php include 'footer.php' ?>
