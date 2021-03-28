@@ -18,6 +18,8 @@ Router::get( ROUTING_PREFIX . '/register' , 'AuthController@register');
 Router::post( ROUTING_PREFIX . '/register' , 'AuthController@handleRegister');
 Router::post( ROUTING_PREFIX . '/logout' , 'AuthController@logout');
 Router::get( ROUTING_PREFIX . '/ldap' , 'AuthController@ldap');
+Router::post( ROUTING_PREFIX . '/ldap' , 'AuthController@handle_ldap');
+
 Router::get( ROUTING_PREFIX . '/login-stats' , 'DashboardController@stats');
 
 

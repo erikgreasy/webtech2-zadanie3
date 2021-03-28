@@ -202,10 +202,39 @@ class AuthController {
 
 
     public function ldap() {
+
+        return view( 'auth/ldap.php' );
         
+    }
+
+    public function handle_ldap() {
+        if(logged_in()) {
+            redirect(BASE_URL);
+        }
+        $errors = [];
+
+
+        $login = $_POST['login'];
+        $password = $_POST['password'];
+
+        if( trim($login) == '' ) {
+            $errors[] = 'Prazdny login';
+        }
+        
+        if( trim($password) == '' ) {
+            $errors[] = 'Prazdne heslo';
+        }
+
+        if( !empty( $errors ) ) {
+            return view( 'auth/ldap.php', [
+                'errors'    => $errors
+            ] );
+        }
+
+
         // using ldap bind
-        $ldapuid  = 'xmasnye';     // ldap rdn or dn
-        $ldappass = 'Erik.masny1999';  // associated password
+        $ldapuid  = $login;     // ldap rdn or dn
+        $ldappass = $password;  // associated password
 
         $dn = 'ou=People, DC=stuba, DC=sk';
         $ldaprdn = "uid=$ldapuid, $dn";
@@ -214,6 +243,7 @@ class AuthController {
         $ldapconn = ldap_connect("ldap.stuba.sk")
             or die("Could not connect to LDAP server.");
 
+        
         if ($ldapconn) {
 
             $set = ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -221,14 +251,55 @@ class AuthController {
             $ldapbind = ldap_bind($ldapconn, $ldaprdn, $ldappass);
 
             // verify binding
-            if ($ldapbind) {
-                echo "LDAP bind successful...";
+            if( !$ldapbind ) {
+
+                $errors[] = 'Prihlásenie neúspešné. Skúste to prosím ešte raz.';
+
             } else {
-                echo "LDAP bind failed...";
+                $results = ldap_search($ldapconn,$dn,"uid=$ldapuid",array("givenname","employeetype","surname","mail","faculty","cn","uisid","uid"),0,5);
+                $ldap_user = ldap_get_entries($ldapconn,$results)[0];
+                $name = $ldap_user['cn'];
+                $surname = $ldap_user['sn'];
+                $email = $ldap_user['mail'];
+
+
+                $user = $this->userRepository->getByEmail( $email );
+
+                // User not found in DB
+                if( !$user ) {
+                    $user = new User();
+                    $user->setName($name);
+                    $user->setSurname($surname);
+                    $user->setEmail($email);
+
+                    $this->userRepository->add( $user );
+                    
+                    $user = $this->userRepository->getByEmail( $email );
+
+                }
+
+                $login = new Login();
+
+                $login->setUserId( $user->getId() );
+                $login->setType( 'ldap' );
+                $this->loginRepository->add( $login );
+                login_user( $user->getId(), $login );
+
+                redirect( BASE_URL );
+
             }
+            
+            ldap_unbind($ldapconn);
 
         }
 
-        ldap_unbind($ldapconn);
+
+        // Credentails do not match
+        if( !empty( $errors ) ) {
+            return view( 'auth/ldap.php', [
+                'errors'    => $errors
+            ] );
+        }
+
     }
 }
