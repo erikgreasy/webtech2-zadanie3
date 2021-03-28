@@ -24,22 +24,33 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="<?= BASE_URL ?>">Home</a>
+                <a class="nav-link" href="<?= BASE_URL ?>">Domov</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= BASE_URL ?>/login">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?= BASE_URL ?>/register">Register</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" onclick="document.querySelector('#logout-form').submit()" href="#">Logout</a>
-
-                <form action="<?= BASE_URL ?>/logout" method="POST" class="d-none" id="logout-form">
-                    
-                </form>
+                <a class="nav-link" href="<?= BASE_URL ?>/login-stats">Štatistiky prihlásení</a>
             </li>
         
         </ul>
+        <ul class="navbar-nav ml-auto">
+            <?php if( logged_in() ): ?>
+                    <li class="navbar-text">
+                        <?= get_logged_user()->getFullName() ?>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" onclick="document.querySelector('#logout-form').submit()" href="#">Odhlásiť</a>
+                        <form action="<?= BASE_URL ?>/logout" method="POST" class="d-none" id="logout-form">
+                            
+                        </form>
+                    </li>
+            <?php else: ?>
+                <li class="nav-item">
+                    <a href="<?= BASE_URL ?>/login" class="nav-link">Prihlásiť sa</a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= BASE_URL ?>/register" class="nav-link">Registrovať sa</a>
+                </li>
+            <?php endif; ?>
+        </ul>
+
     </div>
 </nav>    
