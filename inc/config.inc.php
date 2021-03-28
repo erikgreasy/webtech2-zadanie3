@@ -1,7 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-
 require 'config.php';
 require __DIR__ . '/../vendor/autoload.php';
 require_once 'inc/helper-router-functions.php';
