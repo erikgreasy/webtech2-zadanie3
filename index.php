@@ -1,9 +1,6 @@
 <?php 
 
-require_once 'config.php';
-// require_once 'controller/AuthController.php';
-// require_once 'controller/DashboardController.php';
-
+require_once 'inc/config.inc.php';
 
 use Pecee\Http\Request;
 use Pecee\SimpleRouter\SimpleRouter as Router;
