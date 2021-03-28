@@ -2,7 +2,7 @@
 
 <main id="login">
     <div class="container">
-        <h1 class="display-3 text-center mb-3">Prihláste sa cez LDAP</h1>
+        <h1 class="display-3 text-center mb-3">Prihláste sa cez LDAP STU</h1>
         <div class="row">
             <div class="offset-md-3 col-md-6">
                 <form method="POST" action="<?= BASE_URL ?>/ldap">

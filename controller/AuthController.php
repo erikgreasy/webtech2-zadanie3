@@ -258,9 +258,9 @@ class AuthController {
             } else {
                 $results = ldap_search($ldapconn,$dn,"uid=$ldapuid",array("givenname","employeetype","surname","mail","faculty","cn","uisid","uid"),0,5);
                 $ldap_user = ldap_get_entries($ldapconn,$results)[0];
-                $name = $ldap_user['cn'];
-                $surname = $ldap_user['sn'];
-                $email = $ldap_user['mail'];
+                $name = $ldap_user['givenname'][0];
+                $surname = $ldap_user['sn'][0];
+                $email = $ldap_user['mail'][0];
 
 
                 $user = $this->userRepository->getByEmail( $email );

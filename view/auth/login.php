@@ -30,6 +30,7 @@
                     <button type="submit" class="btn btn-primary btn-block">Prihlásiť</button>
                 </form>
                 <a href="<?= $google_url ?>" class="btn btn-secondary btn-block">Google Login</a>
+                <a href="<?= BASE_URL ?>/ldap" class="btn btn-info btn-block">LDAP STU Login</a>
             </div>
         </div>
 

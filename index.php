@@ -1,8 +1,8 @@
 <?php 
 
 require_once 'config.php';
-require_once 'controller/AuthController.php';
-require_once 'controller/DashboardController.php';
+// require_once 'controller/AuthController.php';
+// require_once 'controller/DashboardController.php';
 
 
 use Pecee\Http\Request;
