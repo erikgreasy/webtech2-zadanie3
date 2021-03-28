@@ -7,7 +7,7 @@
                 <form action="<?= BASE_URL ?>/google-check" method="POST">
                     <div class="form-group">
                         <label for="google_code">Zadaj heslo z aplikácie:</label>
-                        <input type="text" name="google_code" class="form-control" />
+                        <input type="text" name="google_code" class="form-control" autofocus/>
                     </div>
 
                     <input type="hidden" name="user_id" value="<?= $user_id ?>" />
